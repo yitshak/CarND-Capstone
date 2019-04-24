@@ -59,7 +59,7 @@ image_counter = 0
 @sio.on('image')
 def image(sid, data):
     global image_counter
-    if image_counter%5==0:
+    if image_counter%2==0:
         bridge.publish_camera(data)
     image_counter = image_counter+1;
 

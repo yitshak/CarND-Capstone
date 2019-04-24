@@ -70,10 +70,10 @@ class TLDetector(object):
             msg (Image): image from car-mounted camera
 
         """
-        rospy.loginfo("[YY]got image")
+        #rospy.loginfo("[YY]got image")
         # Need to ensure way points tree is already initialized
         if self.waypoint_tree == None:
-            rospy.logwarn("[YY] not handling image- didn't get base waypoints yet")
+            #rospy.logwarn("[YY] not handling image- didn't get base waypoints yet")
             return    
         self.has_image = True
         self.camera_image = msg
@@ -96,11 +96,11 @@ class TLDetector(object):
             light_wp = light_wp if state == TrafficLight.RED else -1
             self.last_wp = light_wp
             self.upcoming_red_light_pub.publish(Int32(light_wp))
-            rospy.logwarn("[YY]publish redlight %d",light_wp)
+            #rospy.logwarn("[YY]publish redlight %d",light_wp)
             
         else:
             self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-            rospy.logwarn("[YY]publish redlight %d",light_wp)
+            #rospy.logwarn("[YY]publish redlight %d",light_wp)
         self.state_count += 1
 
     def get_closest_waypoint(self, x,y):
