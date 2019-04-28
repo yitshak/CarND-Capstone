@@ -59,8 +59,9 @@ image_counter = 0
 @sio.on('image')
 def image(sid, data):
     global image_counter
-    if image_counter%2==0:
-        bridge.publish_camera(data)
+    #this is added since image publishing intreduces hugh lag to our system if it's done in normal frequesncy
+    #if image_counter%10==0:
+    #    bridge.publish_camera(data)
     image_counter = image_counter+1;
 
 if __name__ == '__main__':

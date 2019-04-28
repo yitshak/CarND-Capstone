@@ -21,6 +21,7 @@ class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
 
+        self.light_classifier = None
         self.pose = None
         self.waypoints = None
         self.camera_image = None
@@ -40,7 +41,6 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -48,6 +48,9 @@ class TLDetector(object):
         self.last_wp = -1
         self.state_count = 0
 
+        #We initialize classifier last since it takes some time
+        self.light_classifier = TLClassifier()
+        
         rospy.spin()
 
     def pose_cb(self, msg):
@@ -71,7 +74,7 @@ class TLDetector(object):
 
         """
         #rospy.loginfo("[YY]got image")
-        # Need to ensure way points tree is already initialized
+        #Need to ensure way points tree is already initialized
         if self.waypoint_tree == None:
             #rospy.logwarn("[YY] not handling image- didn't get base waypoints yet")
             return    
@@ -140,16 +143,16 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
         """
         
-        return light.state
-        """if(not self.has_image):
+        #If somthing is wrong (no image - or - classifier not up) return RED
+        if(not self.has_image or self.light_classifier==None):
             self.prev_light_loc = None
-            return False
+            return TrafficLight.RED
 
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
         #Get classification
         return self.light_classifier.get_classification(cv_image)
-        """
+        
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
             location and color
